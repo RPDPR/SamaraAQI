@@ -19,9 +19,11 @@ export interface I_AQI {
   lastUpdated: {
     [K in keyof (I_WAQI & I_SC)]: { key: K; value: (I_WAQI & I_SC)[K] };
   }[keyof (I_WAQI & I_SC)][];
+  lastUpdatedTime: number;
 
   updateWaqiData: (whichKeys: Partial<I_WAQI>) => void;
   updateScData: (whichKeys: Partial<I_SC>) => void;
+  setLastUpdatedTime: (newLastUpdatedTime: number) => void;
 }
 
 export const useAQIStore = create<I_AQI>((set, get) => ({
@@ -38,6 +40,7 @@ export const useAQIStore = create<I_AQI>((set, get) => ({
     humidity: null,
   },
   lastUpdated: [],
+  lastUpdatedTime: Date.now(),
 
   updateWaqiData: ({ aqi: aqi, pm10: pm10, pm25: pm25 }) => {
     set((state) => {
@@ -62,7 +65,11 @@ export const useAQIStore = create<I_AQI>((set, get) => ({
         newLastUpdated.splice(10);
       }
 
-      return { waqiData: newData };
+      return {
+        waqiData: newData,
+        lastUpdated: newLastUpdated,
+        lastUpdatedTime: Date.now(),
+      };
     });
   },
 
@@ -105,8 +112,15 @@ export const useAQIStore = create<I_AQI>((set, get) => ({
       if (newLastUpdated.length >= 10) {
         newLastUpdated.splice(10);
       }
-      console.log(newLastUpdated);
-      return { scData: newData };
+
+      return {
+        scData: newData,
+        lastUpdated: newLastUpdated,
+        lastUpdatedTime: Date.now(),
+      };
     });
+  },
+  setLastUpdatedTime: (newLastUpdatedTime: number) => {
+    set({ lastUpdatedTime: newLastUpdatedTime });
   },
 }));

@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function About() {
-  return <div>NIKITA ABOUT</div>;
+  return <div>ABOUT US</div>;
 }

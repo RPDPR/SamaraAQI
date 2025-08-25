@@ -13,6 +13,7 @@ import { convertPM25ToAQI } from "@/shared/api/utils";
 export const WAQI: FC<T_WAQI> = ({ secondary }) => {
   const { data, error, isLoading } = useSWR(API_LINKS.waqi, fetcherWAQI, {
     refreshInterval: API_FETCH_INTERVAL,
+    fallback: <h1 className="font-sans font-bold">API is not working</h1>,
   });
   const waqiData = useAQIStore((state) => state.waqiData);
   const lastUpdated = useAQIStore((state) => state.lastUpdated);
@@ -20,7 +21,6 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
 
   useEffect(() => {
     if (!data) return;
-
     if (
       waqiData.aqi == data.aqi ||
       waqiData.pm10 == data.pm10 ||
@@ -37,7 +37,14 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
   }, [data, updateWaqiData, waqiData.aqi, waqiData.pm10, waqiData.pm25]);
 
   if (error) return <SC secondary={secondary} />;
-  if (isLoading) return <h1>Loading...</h1>;
+  if (isLoading)
+    return (
+      <div className="relative h-full w-full ">
+        <h1 className="absolute text-[34px] font-sans font-extrabold top-48.5">
+          loading...
+        </h1>
+      </div>
+    );
   if (!data) return <SC secondary={secondary} />;
 
   let res: { resultString: string; resultValue: string } = {
@@ -93,10 +100,10 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
 
   return (
     <div className="relative h-full w-full">
-      <h1 className="absolute text-[190px] font-semibold top-[-20] tracking-[-8px]">
+      <h1 className="absolute text-[190px] font-sans font-semibold top-[-20]">
         {res.resultValue.toLocaleString()}
       </h1>
-      <h2 className="absolute text-[34px] font-extrabold top-48.5">
+      <h2 className="absolute text-[34px] font-sans font-extrabold top-48.5">
         {res.resultString.toLocaleString()}
       </h2>
     </div>

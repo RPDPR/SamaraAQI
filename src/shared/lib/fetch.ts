@@ -1,3 +1,4 @@
+import { useAQIStore } from "@/app/store/useAQIStore";
 import { getClosestSensor, getSensorValues } from "../api/index";
 import { FetchSchema_WAQI } from "../models/index";
 import { FetchSchema_SC } from "../models/index";
@@ -23,6 +24,9 @@ export const fetcherWAQI = async (link: string): Promise<FetchSchema_WAQI> => {
     pm10: Number(json?.data?.iaqi.pm10.v) ?? null,
     pm25: Number(json?.data?.iaqi.pm25.v) ?? null,
   };
+
+  // update zustand store /////
+  useAQIStore.getState().setLastUpdatedTime(Date.now());
   console.log(json);
   return formattedData;
 };
@@ -49,6 +53,9 @@ export const fetcherSC = async (link: string): Promise<FetchSchema_SC> => {
     temperature: Number(temperature) ?? null,
     humidity: Number(humidity) ?? null,
   };
+
+  // update zustand store /////
+  useAQIStore.getState().setLastUpdatedTime(Date.now());
 
   return formattedData;
 };

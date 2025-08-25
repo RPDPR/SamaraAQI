@@ -8,9 +8,10 @@ import { API_LINKS, API_FETCH_INTERVAL } from "@/shared/api/index";
 import { APP_CONSTS } from "@/shared/models/index";
 import { fetcherSC } from "@/shared/lib/index";
 import { convertPM25ToAQI } from "@/shared/api/utils";
+import { TryAgainButton } from "@/shared/ui/index";
 
 export const SC: FC<T_SC> = ({ secondary }) => {
-  const { data, error, isLoading } = useSWR(API_LINKS.sc, fetcherSC, {
+  const { data, error, isLoading, mutate } = useSWR(API_LINKS.sc, fetcherSC, {
     refreshInterval: API_FETCH_INTERVAL,
   });
   const scData = useAQIStore((state) => state.scData);
@@ -44,9 +45,41 @@ export const SC: FC<T_SC> = ({ secondary }) => {
     scData.humidity,
   ]);
 
-  if (error) return <h1>Error: {error.toLocaleString()}</h1>;
-  if (isLoading) return <h1>Loading...</h1>;
-  if (!data) return <h1>no data</h1>;
+  if (error)
+    return (
+      <div className="relative h-full w-full">
+        <h1 className="absolute text-[34px] font-sans font-extrabold top-48.5">
+          Error: {error.toLocaleString()}
+        </h1>
+        <div className="absolute text-[34px] font-sans font-extrabold top-48.5 left-150">
+          <TryAgainButton
+            w={180}
+            h={50}
+            fs={20}
+            text="try again"
+            onClick={() => {
+              mutate();
+            }}
+          />
+        </div>
+      </div>
+    );
+  if (isLoading)
+    return (
+      <div className="relative h-full w-full">
+        <h1 className="absolute text-[34px] font-sans font-extrabold top-48.5">
+          loading...
+        </h1>
+      </div>
+    );
+  if (!data)
+    return (
+      <div className="relative h-full w-full">
+        <h1 className="absolute text-[34px] font-sans font-extrabold top-48.5">
+          no data
+        </h1>
+      </div>
+    );
 
   let res: { resultString: string; resultValue: string } = {
     resultString: "",
@@ -129,9 +162,13 @@ export const SC: FC<T_SC> = ({ secondary }) => {
   }
 
   return (
-    <div>
-      <h1>{res.resultValue.toLocaleString()}</h1>
-      <h2>{res.resultString.toLocaleString()}</h2>
+    <div className="relative h-full w-full">
+      <h1 className="absolute text-[190px] font-sans font-semibold top-[-20]">
+        {res.resultValue.toLocaleString()}
+      </h1>
+      <h2 className="absolute text-[34px] font-sans font-extrabold top-48.5">
+        {res.resultString.toLocaleString()}
+      </h2>
     </div>
   );
 };

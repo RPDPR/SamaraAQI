@@ -5,9 +5,14 @@ export const APP_CONSTS = {
     title1: "Душнила доволен вами",
     title2: "Душнила недоволен вами",
     desc1: "Все показатели в норме",
-    desc2: "Все показатели в норме",
+    desc2: "превышает норму",
   },
   statisticsTile: {},
+  historyTile: {
+    title1: "Дней без",
+    title2: "душноты",
+    history: "История",
+  },
 
   measurementNames: {
     aqi: "AQI",
