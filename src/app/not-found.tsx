@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function NotFound() {
-  return <div>NIKITA ISNT FOUND</div>;
+  return <div>NOT FOUND</div>;
 }

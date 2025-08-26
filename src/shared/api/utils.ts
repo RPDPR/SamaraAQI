@@ -73,7 +73,8 @@ export function getSensorValues(sensor: SC_Sensor) {
   return sensorValues;
 }
 
-export function convertPM25ToAQI(pm25: number): number {
+export function convertPM25ToAQI(pm25: number = 0): number {
+  if (typeof pm25 != "number") return 0;
   const breakpoints = [
     { cLow: 0.0, cHigh: 12.0, iLow: 0, iHigh: 50 },
     { cLow: 12.1, cHigh: 35.4, iLow: 51, iHigh: 100 },

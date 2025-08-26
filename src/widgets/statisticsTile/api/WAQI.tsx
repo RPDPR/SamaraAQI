@@ -11,13 +11,13 @@ import { fetcherWAQI } from "@/shared/lib/index";
 import { convertPM25ToAQI } from "@/shared/api/utils";
 
 export const WAQI: FC<T_WAQI> = ({ secondary }) => {
-  const { data, error, isLoading } = useSWR(API_LINKS.waqi, fetcherWAQI, {
-    refreshInterval: API_FETCH_INTERVAL,
-    fallback: <h1 className="font-sans font-bold">API is not working</h1>,
-  });
   const waqiData = useAQIStore((state) => state.waqiData);
   const lastUpdated = useAQIStore((state) => state.lastUpdated);
   const updateWaqiData = useAQIStore((state) => state.updateWaqiData);
+
+  const { data, error, isLoading } = useSWR(API_LINKS.waqi, fetcherWAQI, {
+    refreshInterval: API_FETCH_INTERVAL,
+  });
 
   useEffect(() => {
     if (!data) return;
@@ -53,24 +53,28 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
   };
 
   if (!secondary) {
-    res.resultString = APP_CONSTS.measurementNames.aqi;
-    res.resultValue = String(
-      (data.aqi ?? waqiData.aqi ?? convertPM25ToAQI(data.pm25)).toFixed(1) ??
-        "no data"
-    );
+    res.resultString = APP_CONSTS.measurementName.aqi;
+    const aqi =
+      data?.aqi ??
+      waqiData.aqi ??
+      (data?.pm25 ? convertPM25ToAQI(data.pm25) : null) ??
+      (waqiData.pm25 ? convertPM25ToAQI(waqiData.pm25) : null);
+
+    res.resultValue =
+      aqi !== null && aqi !== undefined ? aqi.toFixed(1) : "no data";
   } else {
     if (!lastUpdated || lastUpdated.length == 0) {
       res =
         data.pm25 || waqiData.pm25
           ? {
-              resultString: APP_CONSTS.measurementNames.pm25,
+              resultString: APP_CONSTS.measurementName.pm25,
               resultValue:
                 (data.pm25 ?? waqiData.pm25).toFixed(1) ??
                 "no data" + " " + APP_CONSTS.unitsOfMeasurement.pm25,
             }
           : data.pm10 || waqiData.pm10
           ? {
-              resultString: APP_CONSTS.measurementNames.pm10,
+              resultString: APP_CONSTS.measurementName.pm10,
               resultValue:
                 (data.pm10 ?? waqiData.pm10).toFixed(1) ??
                 "no data" + " " + APP_CONSTS.unitsOfMeasurement.pm10,
@@ -81,14 +85,14 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
       res =
         el.key == "pm25"
           ? {
-              resultString: APP_CONSTS.measurementNames.pm25,
+              resultString: APP_CONSTS.measurementName.pm25,
               resultValue:
                 (data.pm25 ?? waqiData.pm25).toFixed(1) ??
                 "no data" + " " + APP_CONSTS.unitsOfMeasurement.pm25,
             }
           : el.key == "pm10"
           ? {
-              resultString: APP_CONSTS.measurementNames.pm10,
+              resultString: APP_CONSTS.measurementName.pm10,
               resultValue:
                 (data.pm10 ?? waqiData.pm10).toFixed(1) ??
                 "no data" + " " + APP_CONSTS.unitsOfMeasurement.pm10,
@@ -100,10 +104,10 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
 
   return (
     <div className="relative h-full w-full">
-      <h1 className="absolute text-[190px] font-sans font-semibold top-[-20]">
+      <h1 className="absolute lg:text-[178px] font-sans font-semibold lg:top-[-10]">
         {res.resultValue.toLocaleString()}
       </h1>
-      <h2 className="absolute text-[34px] font-sans font-extrabold top-48.5">
+      <h2 className="absolute lg:text-[34px] font-sans font-extrabold lg:top-48.5 lg:left-[-1px]">
         {res.resultString.toLocaleString()}
       </h2>
     </div>

@@ -6,7 +6,7 @@ import { Header } from "@/widgets/header/index";
 const inter = Inter({
   variable: "--font-geist-sans",
   subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["100", "200", "300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -22,10 +22,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`lg:w-[1700px] md:w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 ${inter.variable} antialiased`}
+        className={`min-h-screen flex flex-col ${inter.variable} antialiased`}
       >
         <Header />
-        {children}
+        <main className="mx-auto flex-1 w-full max-w-[3840px] sm:px-6 lg:px-8 flex flex-col">
+          {children}
+        </main>
       </body>
     </html>
   );

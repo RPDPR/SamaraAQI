@@ -33,7 +33,6 @@ export const useAQIStore = create<I_AQI>((set, get) => ({
     pm25: null,
   },
   scData: {
-    aqi: null,
     pm10: null,
     pm25: null,
     temperature: null,
@@ -44,8 +43,8 @@ export const useAQIStore = create<I_AQI>((set, get) => ({
 
   updateWaqiData: ({ aqi: aqi, pm10: pm10, pm25: pm25 }) => {
     set((state) => {
-      const newData = state.waqiData;
-      const newLastUpdated = state.lastUpdated;
+      const newData = { ...state.waqiData };
+      const newLastUpdated = [...state.lastUpdated];
 
       if (aqi != undefined) {
         newData.aqi = aqi;
@@ -80,8 +79,8 @@ export const useAQIStore = create<I_AQI>((set, get) => ({
     humidity: humidity,
   }) => {
     set((state) => {
-      const newData = state.scData;
-      const newLastUpdated = state.lastUpdated;
+      const newData = { ...state.scData };
+      const newLastUpdated = [...state.lastUpdated];
 
       if (pm25 != undefined && pm25 != null && newData.pm25 != pm25) {
         newData.pm25 = pm25;

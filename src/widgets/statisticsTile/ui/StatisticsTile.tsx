@@ -1,10 +1,20 @@
 "use client";
+import { FC, useEffect, useState, useMemo, useCallback } from "react";
 import { useAQIStore } from "@/app/store/useAQIStore";
-import { FC, useEffect, useState } from "react";
-import { mutate } from "swr";
-import { API_LINKS } from "@/shared/api/index";
+import useSWR, { mutate } from "swr";
 import { WAQI } from "../api/WAQI";
 import { NeutralButton } from "@/shared/ui/NeutralButton";
+import {
+  FetchSchema_WAQI,
+  FetchSchema_SC,
+  getIndication,
+} from "@/shared/models/index";
+import { fetcherWAQI, fetcherSC } from "@/shared/lib/index";
+import {
+  API_LINKS,
+  API_FETCH_INTERVAL,
+  convertPM25ToAQI,
+} from "@/shared/api/index";
 
 export const UpdatedWhen: FC = () => {
   const lastUpdatedTime = useAQIStore((state) => state.lastUpdatedTime);
@@ -32,36 +42,83 @@ export const UpdatedWhen: FC = () => {
 };
 
 export const StatisticsTile: FC = () => {
+  const waqiStoreData = useAQIStore((state) => state.waqiData);
+  const scStoreData = useAQIStore((state) => state.scData);
+
+  const { data: waqiData, error: waqiError } = useSWR<FetchSchema_WAQI>(
+    API_LINKS.waqi,
+    fetcherWAQI,
+    {
+      refreshInterval: API_FETCH_INTERVAL,
+    }
+  );
+  const { data: scData, error: scError } = useSWR<FetchSchema_SC>(
+    !waqiData && waqiError ? API_LINKS.sc : null,
+    fetcherSC,
+    {
+      refreshInterval: API_FETCH_INTERVAL,
+      revalidateOnMount: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
   const [disabled, setDisabled] = useState(false);
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (disabled) return;
 
     setDisabled(true);
+    setTimeout(() => setDisabled(false), 3000);
 
-    setTimeout(() => {
-      setDisabled(false);
-    }, 3000);
+    mutate(API_LINKS.waqi, undefined, {
+      revalidate: true,
+    });
+    mutate(API_LINKS.sc, undefined, { revalidate: true });
+  }, [disabled]);
 
-    if (!mutate(API_LINKS.waqi)) {
-      mutate(API_LINKS.sc);
-    }
-  };
+  const indication = useMemo(() => {
+    const newAqi =
+      waqiData?.aqi ??
+      (waqiData?.pm25 ? convertPM25ToAQI(waqiData.pm25) : null) ??
+      (scData?.pm25 ? convertPM25ToAQI(scData.pm25) : null) ??
+      waqiStoreData?.aqi ??
+      (waqiStoreData?.pm25 ? convertPM25ToAQI(waqiStoreData.pm25) : null) ??
+      (scStoreData?.pm25 ? convertPM25ToAQI(scStoreData.pm25) : null) ??
+      null;
+
+    return getIndication(newAqi);
+  }, [waqiData, waqiStoreData, scData, scStoreData]);
 
   return (
-    <div className="w-full h-full bg-green-300 bg-gradient-to-br from-white to-green-300 border-1 border-black rounded-2xl pl-22.75 grid grid-rows-[1fr_1fr_1.45fr] grid-cols-1">
+    <div
+      className={
+        "w-full h-full lg:border-1 lg:border-black lg:rounded-2xl sm:lg:pl-22.75 lg:pl-22.75 grid grid-rows-[1fr_1fr_1.45fr] grid-cols-1"
+      }
+      style={{
+        backgroundImage: `linear-gradient(to bottom right, white, ${
+          indication.color ? indication.color : "#ffffff"
+        })`,
+      }}
+    >
       <WAQI secondary={false} />
       <WAQI secondary={true} />
-      <div className="flex justify-end items-end pb-10 pr-12">
-        <NeutralButton
-          w={180}
-          h={50}
-          fs={20}
-          text="update"
-          onClick={handleClick}
-        />
-        <UpdatedWhen />
-      </div>
+      {waqiError && scError ? (
+        <div className="flex justify-between items-end pb-10 pr-12"></div>
+      ) : (
+        <div className="flex justify-between items-end pb-10 pr-12">
+          {" "}
+          <NeutralButton
+            w={180}
+            h={50}
+            fs={20}
+            text="update"
+            disabled={disabled}
+            onClick={handleClick}
+          />
+          <UpdatedWhen />
+        </div>
+      )}
     </div>
   );
 };

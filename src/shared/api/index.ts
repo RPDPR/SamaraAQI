@@ -5,4 +5,9 @@ export { API_LINKS } from "./links";
 export { API_FETCH_INTERVAL } from "./fetchInterval";
 
 // sensor community data utils /////
-export { getDistToSensor, getClosestSensor, getSensorValues } from "./utils";
+export {
+  getDistToSensor,
+  getClosestSensor,
+  getSensorValues,
+  convertPM25ToAQI,
+} from "./utils";
