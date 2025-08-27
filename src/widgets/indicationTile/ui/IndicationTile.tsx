@@ -26,14 +26,16 @@ export const IndicationTile: FC = () => {
   } = useSWR<FetchSchema_WAQI>(API_LINKS.waqi, fetcherWAQI, {
     refreshInterval: API_FETCH_INTERVAL,
   });
-  const { data: scData, isLoading: scIsLoading } = useSWR<FetchSchema_SC>(
+  const {
+    data: scData,
+    error: scError,
+    isLoading: scIsLoading,
+  } = useSWR<FetchSchema_SC>(
     !waqiData && waqiError ? API_LINKS.sc : null,
     fetcherSC,
     {
       refreshInterval: API_FETCH_INTERVAL,
       revalidateOnMount: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
     }
   );
 
@@ -48,6 +50,37 @@ export const IndicationTile: FC = () => {
       null;
     return getIndication(newAqi);
   }, [waqiData, waqiStoreData, scData, scStoreData]);
+
+  if (waqiError && scError)
+    return (
+      <div
+        className="w-full h-full text-left font-sans font-medium lg:border-1 lg:border-black lg:rounded-2xl flex flex-col justify-between px-15 pt-6.5"
+        style={{
+          backgroundColor: indication.color ? indication.color : "#d4d4d4",
+        }}
+      >
+        <div className="relative h-full w-full">
+          <h1 className="absolute text-[34px] font-sans font-extrabold top-48.5">
+            Error: {(waqiError ?? scError).toLocaleString()}
+          </h1>
+        </div>
+      </div>
+    );
+  if (waqiIsLoading || scIsLoading)
+    return (
+      <div
+        className="w-full h-full text-left font-sans font-medium lg:border-1 lg:border-black lg:rounded-2xl flex flex-col justify-between px-15 pt-6.5"
+        style={{
+          backgroundColor: indication.color ? indication.color : "#d4d4d4",
+        }}
+      >
+        <div className="relative h-full w-full">
+          <h1 className="absolute text-[34px] font-sans font-extrabold top-48.5">
+            loading...
+          </h1>
+        </div>
+      </div>
+    );
 
   const content = (
     <>
@@ -81,20 +114,5 @@ export const IndicationTile: FC = () => {
     </>
   );
 
-  return waqiIsLoading || scIsLoading ? (
-    <div
-      className="w-full h-full text-left font-sans font-medium lg:border-1 lg:border-black lg:rounded-2xl flex flex-col justify-between px-15 pt-6.5"
-      style={{
-        backgroundColor: indication.color ? indication.color : "#d4d4d4",
-      }}
-    >
-      <div className="relative h-full w-full">
-        <h1 className="absolute text-[34px] font-sans font-extrabold top-48.5">
-          loading...
-        </h1>
-      </div>
-    </div>
-  ) : (
-    content
-  );
+  return content;
 };

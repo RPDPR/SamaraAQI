@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useAQIStore } from "@/app/store/useAQIStore";
 import { T_WAQI } from "../model/types";
@@ -11,30 +11,101 @@ import { fetcherWAQI } from "@/shared/lib/index";
 import { convertPM25ToAQI } from "@/shared/api/utils";
 
 export const WAQI: FC<T_WAQI> = ({ secondary }) => {
-  const waqiData = useAQIStore((state) => state.waqiData);
+  const waqiStoreData_aqi = useAQIStore((state) => state.waqiData.aqi);
+  const waqiStoreData_pm25 = useAQIStore((state) => state.waqiData.pm25);
+  const waqiStoreData_pm10 = useAQIStore((state) => state.waqiData.pm10);
   const lastUpdated = useAQIStore((state) => state.lastUpdated);
   const updateWaqiData = useAQIStore((state) => state.updateWaqiData);
 
-  const { data, error, isLoading } = useSWR(API_LINKS.waqi, fetcherWAQI, {
+  const {
+    data: waqiData,
+    error,
+    isLoading,
+  } = useSWR(API_LINKS.waqi, fetcherWAQI, {
     refreshInterval: API_FETCH_INTERVAL,
   });
 
+  const aqi = waqiData?.aqi ?? waqiStoreData_aqi;
+  const pm25 = waqiData?.pm25 ?? waqiStoreData_pm25;
+  const pm10 = waqiData?.pm10 ?? waqiStoreData_pm10;
+
+  const [res, setRes] = useState<{
+    resultString: string;
+    resultValue: string;
+  }>({ resultString: "", resultValue: "" });
+
   useEffect(() => {
-    if (!data) return;
-    if (
-      waqiData.aqi == data.aqi ||
-      waqiData.pm10 == data.pm10 ||
-      waqiData.pm25 == data.pm25
-    ) {
-      return;
+    const shouldUpdate =
+      aqi !== waqiStoreData_aqi ||
+      pm25 !== waqiStoreData_pm25 ||
+      pm10 !== waqiStoreData_pm10;
+
+    if (shouldUpdate) {
+      updateWaqiData({ aqi, pm10, pm25 });
     }
 
-    updateWaqiData({
-      aqi: data?.aqi,
-      pm10: data?.pm10,
-      pm25: data?.pm25,
-    });
-  }, [data, updateWaqiData, waqiData.aqi, waqiData.pm10, waqiData.pm25]);
+    let res: { resultString: string; resultValue: string } = {
+      resultString: "",
+      resultValue: "",
+    };
+
+    if (!secondary) {
+      res.resultString = APP_CONSTS.measurementName.aqi;
+      res.resultValue =
+        aqi != null
+          ? aqi.toFixed(0)
+          : pm25 != null
+          ? convertPM25ToAQI(pm25).toFixed()
+          : "no data";
+    } else {
+      if (lastUpdated != null && Object.keys(lastUpdated).length) {
+        res =
+          lastUpdated.key == "pm25" && pm25 != null
+            ? {
+                resultString: APP_CONSTS.measurementName.pm25,
+                resultValue: `${pm25.toFixed(1)} ${
+                  APP_CONSTS.unitsOfMeasurement.pm25
+                }`,
+              }
+            : lastUpdated.key == "pm10" && pm10 != null
+            ? {
+                resultString: APP_CONSTS.measurementName.pm10,
+                resultValue: `${pm10.toFixed(1)} ${
+                  APP_CONSTS.unitsOfMeasurement.pm10
+                }`,
+              }
+            : { resultString: "", resultValue: "no data" };
+      } else {
+        res =
+          pm25 != null
+            ? {
+                resultString: APP_CONSTS.measurementName.pm25,
+                resultValue: `${pm25.toFixed(1)} ${
+                  APP_CONSTS.unitsOfMeasurement.pm25
+                }`,
+              }
+            : pm10 != null
+            ? {
+                resultString: APP_CONSTS.measurementName.pm10,
+                resultValue: `${pm10.toFixed(1)} ${
+                  APP_CONSTS.unitsOfMeasurement.pm10
+                }`,
+              }
+            : { resultString: "", resultValue: "no data" };
+      }
+    }
+    setRes(res);
+  }, [
+    aqi,
+    pm25,
+    pm10,
+    lastUpdated,
+    secondary,
+    waqiStoreData_aqi,
+    waqiStoreData_pm10,
+    waqiStoreData_pm25,
+    updateWaqiData,
+  ]);
 
   if (error) return <SC secondary={secondary} />;
   if (isLoading)
@@ -45,81 +116,15 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
         </h1>
       </div>
     );
-  if (!data) return <SC secondary={secondary} />;
-
-  let res: { resultString: string; resultValue: string } = {
-    resultString: "",
-    resultValue: "",
-  };
-
-  if (!secondary) {
-    res.resultString = APP_CONSTS.measurementName.aqi;
-    const aqi =
-      data.aqi ??
-      waqiData.aqi ??
-      (data.pm25 != null ? convertPM25ToAQI(data.pm25) : null) ??
-      (waqiData.pm25 != null ? convertPM25ToAQI(waqiData.pm25) : null);
-
-    res.resultValue = aqi != null ? aqi.toFixed(0) : "no data";
-  } else {
-    if (!lastUpdated || lastUpdated.length == 0) {
-      res =
-        (data.pm25 ?? waqiData.pm25) != null
-          ? {
-              resultString: APP_CONSTS.measurementName.pm25,
-              resultValue:
-                (data.pm25 ?? waqiData.pm25) != null
-                  ? `${(data.pm25 ?? waqiData.pm25).toFixed(0)} ${
-                      APP_CONSTS.unitsOfMeasurement.pm25
-                    }`
-                  : "no data",
-            }
-          : (data.pm10 ?? waqiData.pm10) != null
-          ? {
-              resultString: APP_CONSTS.measurementName.pm10,
-              resultValue:
-                (data.pm10 ?? waqiData.pm10) != null
-                  ? `${(data.pm10 ?? waqiData.pm10).toFixed(0)} ${
-                      APP_CONSTS.unitsOfMeasurement.pm10
-                    }`
-                  : "no data",
-            }
-          : res;
-    }
-    lastUpdated.forEach((el) => {
-      res =
-        el.key == "pm25"
-          ? {
-              resultString: APP_CONSTS.measurementName.pm25,
-              resultValue:
-                (data.pm25 ?? waqiData.pm25) != null
-                  ? `${(data.pm25 ?? waqiData.pm25).toFixed(0)} ${
-                      APP_CONSTS.unitsOfMeasurement.pm25
-                    }`
-                  : "no data",
-            }
-          : el.key == "pm10"
-          ? {
-              resultString: APP_CONSTS.measurementName.pm10,
-              resultValue:
-                (data.pm10 ?? waqiData.pm10) != null
-                  ? `${(data.pm10 ?? waqiData.pm10).toFixed(0)} ${
-                      APP_CONSTS.unitsOfMeasurement.pm10
-                    }`
-                  : "no data",
-            }
-          : res;
-      return;
-    });
-  }
+  if (!waqiData) return <SC secondary={secondary} />;
 
   return (
     <div className="relative h-full w-full text-nowrap">
       <h1 className="absolute lg:text-[178px] font-sans font-semibold lg:top-[-10]">
-        {res.resultValue.toLocaleString()}
+        {res.resultValue ? res.resultValue.toLocaleString() : "no data"}
       </h1>
       <h2 className="absolute lg:text-[34px] font-sans font-extrabold lg:top-48.5 lg:left-[-1px]">
-        {res.resultString.toLocaleString()}
+        {res.resultString ? res.resultString.toLocaleString() : ""}
       </h2>
     </div>
   );

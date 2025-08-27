@@ -25,8 +25,8 @@ export const APP_CONSTS = {
     aqi: "AQI",
     pm25: "частиц до 2.5 мкм",
     pm10: "частиц до 10 мкм",
-    humidity: "влажность",
-    temperature: "температура",
+    humidity: "Влажность",
+    temperature: "Температура",
   },
 
   unitsOfMeasurement: {

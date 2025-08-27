@@ -9,5 +9,6 @@ export {
   getDistToSensor,
   getClosestSensor,
   getSensorValues,
+  getWAQIValues,
   convertPM25ToAQI,
 } from "./utils";

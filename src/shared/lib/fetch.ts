@@ -1,5 +1,5 @@
 import { useAQIStore } from "@/app/store/useAQIStore";
-import { getClosestSensor, getSensorValues } from "../api/index";
+import { getWAQIValues, getClosestSensor, getSensorValues } from "../api/index";
 import { FetchSchema_WAQI } from "../models/index";
 import { FetchSchema_SC } from "../models/index";
 
@@ -19,15 +19,17 @@ export const fetcherWAQI = async (link: string): Promise<FetchSchema_WAQI> => {
     throw new Error(`WAQI API error: ${json.data}`);
   }
 
+  const { aqi, pm10, pm25 } = getWAQIValues(json);
+
   const formattedData: FetchSchema_WAQI = {
-    aqi: Number(json?.data?.aqi) ?? null,
-    pm10: Number(json?.data?.iaqi.pm10.v) ?? null,
-    pm25: Number(json?.data?.iaqi.pm25.v) ?? null,
+    aqi: aqi ?? null,
+    pm10: pm10 ?? null,
+    pm25: pm25 ?? null,
   };
 
   // update zustand store /////
   useAQIStore.getState().setLastUpdatedTime(Date.now());
-  console.log(json);
+  console.log(formattedData);
   return formattedData;
 };
 
@@ -44,18 +46,18 @@ export const fetcherSC = async (link: string): Promise<FetchSchema_SC> => {
     { lat: Number(POINT_LATITUDE), lon: Number(POINT_LONGITUDE) },
     json
   );
-  console.log(closestSensor); // sensor log /////
+
   const { pm10, pm25, temperature, humidity } = getSensorValues(closestSensor);
 
   const formattedData: FetchSchema_SC = {
-    pm10: Number(pm10) ?? null,
-    pm25: Number(pm25) ?? null,
-    temperature: Number(temperature) ?? null,
-    humidity: Number(humidity) ?? null,
+    pm25: pm25 ?? null,
+    temperature: temperature ?? null,
+    pm10: pm10 ?? null,
+    humidity: humidity ?? null,
   };
 
   // update zustand store /////
   useAQIStore.getState().setLastUpdatedTime(Date.now());
-
+  console.log(formattedData);
   return formattedData;
 };

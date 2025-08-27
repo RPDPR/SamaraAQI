@@ -45,21 +45,23 @@ export const StatisticsTile: FC = () => {
   const waqiStoreData = useAQIStore((state) => state.waqiData);
   const scStoreData = useAQIStore((state) => state.scData);
 
-  const { data: waqiData, error: waqiError } = useSWR<FetchSchema_WAQI>(
-    API_LINKS.waqi,
-    fetcherWAQI,
-    {
-      refreshInterval: API_FETCH_INTERVAL,
-    }
-  );
-  const { data: scData, error: scError } = useSWR<FetchSchema_SC>(
+  const {
+    data: waqiData,
+    error: waqiError,
+    isLoading: waqiIsLoading,
+  } = useSWR<FetchSchema_WAQI>(API_LINKS.waqi, fetcherWAQI, {
+    refreshInterval: API_FETCH_INTERVAL,
+  });
+  const {
+    data: scData,
+    error: scError,
+    isLoading: scIsLoading,
+  } = useSWR<FetchSchema_SC>(
     !waqiData && waqiError ? API_LINKS.sc : null,
     fetcherSC,
     {
       refreshInterval: API_FETCH_INTERVAL,
       revalidateOnMount: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
     }
   );
 
@@ -103,11 +105,11 @@ export const StatisticsTile: FC = () => {
     >
       <WAQI secondary={false} />
       <WAQI secondary={true} />
-      {waqiError && scError ? (
+      {(waqiError && scError) ||
+      (waqiError && scError && (waqiIsLoading || scIsLoading)) ? (
         <div className="flex justify-between items-end pb-10 pr-12"></div>
       ) : (
         <div className="flex justify-between items-end pb-10 pr-12">
-          {" "}
           <NeutralButton
             w={180}
             h={50}

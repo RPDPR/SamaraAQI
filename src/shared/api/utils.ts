@@ -1,4 +1,9 @@
-import { SC_Sensor } from "../models/index";
+import {
+  WAQI_Response,
+  SC_Sensor,
+  FetchSchema_WAQI,
+  FetchSchema_SC,
+} from "../models/index";
 
 export function getDistToSensor(
   point: { lat: number; lon: number },
@@ -16,7 +21,7 @@ export function getClosestSensor(
     sensordatavalues: [
       {
         id: 0,
-        value: "",
+        value: null,
         value_type: "",
       },
     ],
@@ -40,13 +45,8 @@ export function getClosestSensor(
   return closestSensor;
 }
 
-export function getSensorValues(sensor: SC_Sensor) {
-  const sensorValues: {
-    pm10: string | null;
-    pm25: string | null;
-    temperature: string | null;
-    humidity: string | null;
-  } = {
+export function getSensorValues(sensor: SC_Sensor): FetchSchema_SC {
+  const sensorValues: FetchSchema_SC = {
     pm10: null,
     pm25: null,
     temperature: null,
@@ -57,23 +57,39 @@ export function getSensorValues(sensor: SC_Sensor) {
     const valueType = el.value_type;
     switch (valueType) {
       case "P1":
-        sensorValues.pm10 = el.value;
+        sensorValues.pm10 = el.value != null ? Number(el.value) : null;
         break;
       case "P2":
-        sensorValues.pm25 = el.value;
+        sensorValues.pm25 = el.value != null ? Number(el.value) : null;
         break;
       case "temperature":
-        sensorValues.temperature = el.value;
+        sensorValues.temperature = el.value != null ? Number(el.value) : null;
         break;
       case "humidity":
-        sensorValues.humidity = el.value;
+        sensorValues.humidity = el.value != null ? Number(el.value) : null;
         break;
     }
   });
   return sensorValues;
 }
 
-export function convertPM25ToAQI(pm25: number = 0): number {
+export function getWAQIValues(resp: WAQI_Response): FetchSchema_WAQI {
+  const waqiValues: FetchSchema_WAQI = {
+    aqi: null,
+    pm10: null,
+    pm25: null,
+  };
+
+  waqiValues.aqi = resp.data.aqi != null ? Number(resp.data.aqi) : null;
+  waqiValues.pm10 =
+    resp.data.iaqi.pm10.v != null ? Number(resp.data.iaqi.pm10.v) : null;
+  waqiValues.pm25 =
+    resp.data.iaqi.pm25.v != null ? Number(resp.data.iaqi.pm25.v) : null;
+
+  return waqiValues;
+}
+
+export function convertPM25ToAQI(pm25: number): number {
   if (typeof pm25 != "number") return 0;
   const breakpoints = [
     { cLow: 0.0, cHigh: 12.0, iLow: 0, iHigh: 50 },

@@ -11,14 +11,16 @@ export interface I_SC {
   temperature: number | null;
   humidity: number | null;
 }
+export type T_lastUpdated = {
+  key: keyof I_WAQI | keyof I_SC | "";
+  value: number | null;
+};
 
 export interface I_AQI {
   waqiData: I_WAQI;
   scData: I_SC;
 
-  lastUpdated: {
-    [K in keyof (I_WAQI & I_SC)]: { key: K; value: (I_WAQI & I_SC)[K] };
-  }[keyof (I_WAQI & I_SC)][];
+  lastUpdated: T_lastUpdated;
   lastUpdatedTime: number;
 
   updateWaqiData: (whichKeys: Partial<I_WAQI>) => void;
@@ -38,37 +40,32 @@ export const useAQIStore = create<I_AQI>((set, get) => ({
     temperature: null,
     humidity: null,
   },
-  lastUpdated: [],
+  lastUpdated: { key: "", value: null },
   lastUpdatedTime: Date.now(),
 
   updateWaqiData: ({ aqi: aqi, pm10: pm10, pm25: pm25 }) => {
-    set((state) => {
-      const newData = { ...state.waqiData };
-      const newLastUpdated = [...state.lastUpdated];
+    const newData = { ...get().waqiData };
+    let newLastUpdated: T_lastUpdated = { ...get().lastUpdated };
 
-      if (aqi != undefined) {
-        newData.aqi = aqi;
-        newLastUpdated.unshift({ key: "aqi", value: aqi });
-      }
-      if (pm25 != undefined) {
-        newData.pm25 = pm25;
-        newLastUpdated.unshift({ key: "pm25", value: pm25 });
-      }
-      if (pm10 != undefined) {
-        newData.pm10 = pm10;
-        newLastUpdated.unshift({ key: "pm10", value: pm10 });
-      }
+    if (aqi == null && pm10 == null && pm25 == null) return;
 
-      // array cleaning /////
-      if (newLastUpdated.length >= 10) {
-        newLastUpdated.splice(10);
-      }
+    if (pm10 != null && newData.pm10 != pm10) {
+      newData.pm10 = pm10;
+      newLastUpdated = { key: "pm10", value: pm10 };
+    }
+    if (pm25 != null && newData.pm25 != pm25) {
+      newData.pm25 = pm25;
+      newLastUpdated = { key: "pm25", value: pm25 };
+    }
+    if (aqi != null && newData.aqi != aqi) {
+      newData.aqi = aqi;
+      newLastUpdated = { key: "aqi", value: aqi };
+    }
 
-      return {
-        waqiData: newData,
-        lastUpdated: newLastUpdated,
-        lastUpdatedTime: Date.now(),
-      };
+    set({
+      waqiData: newData,
+      lastUpdated: newLastUpdated,
+      lastUpdatedTime: Date.now(),
     });
   },
 
@@ -78,45 +75,38 @@ export const useAQIStore = create<I_AQI>((set, get) => ({
     temperature: temperature,
     humidity: humidity,
   }) => {
-    set((state) => {
-      const newData = { ...state.scData };
-      const newLastUpdated = [...state.lastUpdated];
+    const newData = { ...get().scData };
+    let newLastUpdated: T_lastUpdated = { ...get().lastUpdated };
 
-      if (pm25 != undefined && pm25 != null && newData.pm25 != pm25) {
-        newData.pm25 = pm25;
-        newLastUpdated.unshift({ key: "pm25", value: pm25 });
-      }
-      if (
-        temperature != undefined &&
-        temperature != null &&
-        newData.temperature != temperature
-      ) {
-        newData.temperature = temperature;
-        newLastUpdated.unshift({ key: "temperature", value: temperature });
-      }
-      if (pm10 != undefined && pm10 != null && newData.pm10 != pm10) {
-        newData.pm10 = pm10;
-        newLastUpdated.unshift({ key: "pm10", value: pm10 });
-      }
-      if (
-        humidity != undefined &&
-        humidity != null &&
-        newData.humidity != humidity
-      ) {
-        newData.humidity = humidity;
-        newLastUpdated.unshift({ key: "humidity", value: humidity });
-      }
+    if (
+      (pm10 == null || pm10 == newData.pm10) &&
+      (pm25 == null || pm25 == newData.pm25) &&
+      (temperature == null || temperature == newData.temperature) &&
+      (humidity == null || humidity == newData.humidity)
+    )
+      return;
 
-      // array cleaning /////
-      if (newLastUpdated.length >= 10) {
-        newLastUpdated.splice(10);
-      }
+    if (humidity != null && newData.humidity != humidity) {
+      newData.humidity = humidity;
+      newLastUpdated = { key: "humidity", value: humidity };
+    }
+    if (pm10 != null && newData.pm10 != pm10) {
+      newData.pm10 = pm10;
+      newLastUpdated = { key: "pm10", value: pm10 };
+    }
+    if (temperature != null && newData.temperature != temperature) {
+      newData.temperature = temperature;
+      newLastUpdated = { key: "temperature", value: temperature };
+    }
+    if (pm25 != null && newData.pm25 != pm25) {
+      newData.pm25 = pm25;
+      newLastUpdated = { key: "pm25", value: pm25 };
+    }
 
-      return {
-        scData: newData,
-        lastUpdated: newLastUpdated,
-        lastUpdatedTime: Date.now(),
-      };
+    set({
+      scData: newData,
+      lastUpdated: newLastUpdated,
+      lastUpdatedTime: Date.now(),
     });
   },
   setLastUpdatedTime: (newLastUpdatedTime: number) => {
