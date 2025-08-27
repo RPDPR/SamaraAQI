@@ -20,12 +20,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <body
-        className={`min-h-screen flex flex-col ${inter.variable} antialiased`}
+        className={`min-h-screen h-full flex flex-col ${inter.variable} antialiased`}
       >
         <Header />
-        <main className="mx-auto flex-1 w-full max-w-[3840px] sm:px-6 lg:px-8 flex flex-col">
+        <main className="mx-auto flex-1 w-full max-w-[3840px] sm:px-6 lg:px-10 flex flex-col">
           {children}
         </main>
       </body>

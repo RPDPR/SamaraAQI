@@ -55,29 +55,34 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
   if (!secondary) {
     res.resultString = APP_CONSTS.measurementName.aqi;
     const aqi =
-      data?.aqi ??
+      data.aqi ??
       waqiData.aqi ??
-      (data?.pm25 ? convertPM25ToAQI(data.pm25) : null) ??
-      (waqiData.pm25 ? convertPM25ToAQI(waqiData.pm25) : null);
+      (data.pm25 != null ? convertPM25ToAQI(data.pm25) : null) ??
+      (waqiData.pm25 != null ? convertPM25ToAQI(waqiData.pm25) : null);
 
-    res.resultValue =
-      aqi !== null && aqi !== undefined ? aqi.toFixed(1) : "no data";
+    res.resultValue = aqi != null ? aqi.toFixed(0) : "no data";
   } else {
     if (!lastUpdated || lastUpdated.length == 0) {
       res =
-        data.pm25 || waqiData.pm25
+        (data.pm25 ?? waqiData.pm25) != null
           ? {
               resultString: APP_CONSTS.measurementName.pm25,
               resultValue:
-                (data.pm25 ?? waqiData.pm25).toFixed(1) ??
-                "no data" + " " + APP_CONSTS.unitsOfMeasurement.pm25,
+                (data.pm25 ?? waqiData.pm25) != null
+                  ? `${(data.pm25 ?? waqiData.pm25).toFixed(0)} ${
+                      APP_CONSTS.unitsOfMeasurement.pm25
+                    }`
+                  : "no data",
             }
-          : data.pm10 || waqiData.pm10
+          : (data.pm10 ?? waqiData.pm10) != null
           ? {
               resultString: APP_CONSTS.measurementName.pm10,
               resultValue:
-                (data.pm10 ?? waqiData.pm10).toFixed(1) ??
-                "no data" + " " + APP_CONSTS.unitsOfMeasurement.pm10,
+                (data.pm10 ?? waqiData.pm10) != null
+                  ? `${(data.pm10 ?? waqiData.pm10).toFixed(0)} ${
+                      APP_CONSTS.unitsOfMeasurement.pm10
+                    }`
+                  : "no data",
             }
           : res;
     }
@@ -87,15 +92,21 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
           ? {
               resultString: APP_CONSTS.measurementName.pm25,
               resultValue:
-                (data.pm25 ?? waqiData.pm25).toFixed(1) ??
-                "no data" + " " + APP_CONSTS.unitsOfMeasurement.pm25,
+                (data.pm25 ?? waqiData.pm25) != null
+                  ? `${(data.pm25 ?? waqiData.pm25).toFixed(0)} ${
+                      APP_CONSTS.unitsOfMeasurement.pm25
+                    }`
+                  : "no data",
             }
           : el.key == "pm10"
           ? {
               resultString: APP_CONSTS.measurementName.pm10,
               resultValue:
-                (data.pm10 ?? waqiData.pm10).toFixed(1) ??
-                "no data" + " " + APP_CONSTS.unitsOfMeasurement.pm10,
+                (data.pm10 ?? waqiData.pm10) != null
+                  ? `${(data.pm10 ?? waqiData.pm10).toFixed(0)} ${
+                      APP_CONSTS.unitsOfMeasurement.pm10
+                    }`
+                  : "no data",
             }
           : res;
       return;
@@ -103,7 +114,7 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
   }
 
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-full w-full text-nowrap">
       <h1 className="absolute lg:text-[178px] font-sans font-semibold lg:top-[-10]">
         {res.resultValue.toLocaleString()}
       </h1>

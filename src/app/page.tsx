@@ -12,18 +12,18 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="2xl:h-390 lg:h-208.5 pt-2 pb-2 grid grid-cols-[39.6fr_60.4fr] grid-rows-1 gap-[35px]">
-      <div className="w-full h-full grid grid-cols-1 grid-rows-[56.2fr_43.8fr] gap-[35px]">
+    <div className="w-full h-full">
+      <div className="w-full h-full lg:grid lg:grid-cols-[1.98fr_3.02fr] lg:grid-rows-[5.6fr_4.4fr] lg:gap-10 flex flex-col pb-5">
         <div className="w-full h-full">
           <IndicationTile />
         </div>
-        <div className="w-full h-full grid grid-cols-2 gap-9 pb-1">
+        <div className="w-full h-full lg:row-span-2 order-2 lg:order-none">
+          <StatisticsTile />
+        </div>
+        <div className="w-full h-full lg:grid lg:grid-cols-2 lg:gap-9 lg:pb-1 flex flex-col gap-4 order-3 lg:order-none">
           <HistoryTile />
           <LogoTile />
         </div>
-      </div>
-      <div className="w-full h-full">
-        <StatisticsTile />
       </div>
     </div>
   );

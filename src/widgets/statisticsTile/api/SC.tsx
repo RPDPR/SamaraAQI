@@ -90,44 +90,51 @@ export const SC: FC<T_SC> = ({ secondary }) => {
   if (!secondary) {
     res.resultString = APP_CONSTS.measurementName.aqi;
     const aqi =
-      (data?.pm25 !== undefined && data.pm25 !== null
-        ? convertPM25ToAQI(data.pm25)
-        : null) ??
-      (scData?.pm25 !== undefined && scData.pm25 !== null
-        ? convertPM25ToAQI(scData.pm25)
-        : null);
-    res.resultValue =
-      aqi !== null && aqi !== undefined ? aqi.toFixed(1) : "no data";
+      (data.pm25 != null ? convertPM25ToAQI(data.pm25) : null) ??
+      (scData.pm25 != null ? convertPM25ToAQI(scData.pm25) : null);
+    res.resultValue = aqi != null ? aqi.toFixed(0) : "no data";
   } else {
     if (!lastUpdated || lastUpdated.length == 0) {
       res =
-        data.pm25 || scData.pm25
+        (data.pm25 ?? scData.pm25) != null
           ? {
               resultString: APP_CONSTS.measurementName.pm25,
               resultValue:
-                (data.pm25 ?? scData.pm25).toFixed(1) ??
-                "no data" + " " + APP_CONSTS.unitsOfMeasurement.pm25,
+                (data.pm25 ?? scData.pm25) != null
+                  ? `${(data.pm25 ?? scData.pm25).toFixed(0)} ${
+                      APP_CONSTS.unitsOfMeasurement.pm25
+                    }`
+                  : "no data",
             }
-          : data.temperature || scData.temperature
+          : (data.temperature ?? scData.temperature) != null
           ? {
               resultString: APP_CONSTS.measurementName.temperature,
               resultValue:
-                (data.temperature ?? scData.temperature).toFixed(1) ??
-                "no data" + " " + APP_CONSTS.unitsOfMeasurement.temperature,
+                (data.temperature ?? scData.temperature) != null
+                  ? `${(data.temperature ?? scData.temperature).toFixed(1)} ${
+                      APP_CONSTS.unitsOfMeasurement.temperature
+                    }`
+                  : "no data",
             }
-          : data.pm10 || scData.pm10
+          : (data.pm10 ?? scData.pm10) != null
           ? {
               resultString: APP_CONSTS.measurementName.pm10,
               resultValue:
-                (data.pm10 ?? scData.pm10).toFixed(1) ??
-                "no data" + " " + APP_CONSTS.unitsOfMeasurement.pm10,
+                (data.pm10 ?? scData.pm10) != null
+                  ? `${(data.pm10 ?? scData.pm10).toFixed(0)} ${
+                      APP_CONSTS.unitsOfMeasurement.pm10
+                    }`
+                  : "no data",
             }
-          : data.humidity || scData.humidity
+          : (data.humidity ?? scData.humidity) != null
           ? {
               resultString: APP_CONSTS.measurementName.humidity,
               resultValue:
-                (data.humidity ?? scData.humidity).toFixed(1) ??
-                "no data" + " " + APP_CONSTS.unitsOfMeasurement.humidity,
+                (data.humidity ?? scData.humidity) != null
+                  ? `${(data.humidity ?? scData.humidity).toFixed(0)} ${
+                      APP_CONSTS.unitsOfMeasurement.humidity
+                    }`
+                  : "no data",
             }
           : res;
     }
@@ -138,29 +145,41 @@ export const SC: FC<T_SC> = ({ secondary }) => {
           ? {
               resultString: APP_CONSTS.measurementName.pm25,
               resultValue:
-                (data.pm25 ?? scData.pm25).toFixed(1) ??
-                "no data" + " " + APP_CONSTS.unitsOfMeasurement.pm25,
+                (data.pm25 ?? scData.pm25) != null
+                  ? `${(data.pm25 ?? scData.pm25).toFixed(0)} ${
+                      APP_CONSTS.unitsOfMeasurement.pm25
+                    }`
+                  : "no data",
             }
           : el.key == "temperature"
           ? {
               resultString: APP_CONSTS.measurementName.temperature,
               resultValue:
-                (data.temperature ?? scData.temperature).toFixed(1) ??
-                "no data" + " " + APP_CONSTS.unitsOfMeasurement.temperature,
+                (data.temperature ?? scData.temperature) != null
+                  ? `${(data.temperature ?? scData.temperature).toFixed(1)} ${
+                      APP_CONSTS.unitsOfMeasurement.temperature
+                    }`
+                  : "no data",
             }
           : el.key == "pm10"
           ? {
               resultString: APP_CONSTS.measurementName.pm10,
               resultValue:
-                (data.pm10 ?? scData.pm10).toFixed(1) ??
-                "no data" + " " + APP_CONSTS.unitsOfMeasurement.pm10,
+                (data.pm10 ?? scData.pm10) != null
+                  ? `${(data.pm10 ?? scData.pm10).toFixed(0)} ${
+                      APP_CONSTS.unitsOfMeasurement.pm10
+                    }`
+                  : "no data",
             }
           : el.key == "humidity"
           ? {
               resultString: APP_CONSTS.measurementName.humidity,
               resultValue:
-                (data.humidity ?? scData.humidity).toFixed(1) ??
-                "no data" + " " + APP_CONSTS.unitsOfMeasurement.humidity,
+                (data.humidity ?? scData.humidity) != null
+                  ? `${(data.humidity ?? scData.humidity).toFixed(0)} ${
+                      APP_CONSTS.unitsOfMeasurement.humidity
+                    }`
+                  : "no data",
             }
           : res;
       return;
