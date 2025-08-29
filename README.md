@@ -1,6 +1,6 @@
-AQI SAMARA | RPD | 08/30/2025
+### AQI SAMARA | RPD | 08/30/2025
 
-QUICK SET UP TO GO:
+### QUICK SET UP TO GO:
 
 ### 1 (CLONE REPOSITORY)
 ```cmd
@@ -60,3 +60,4 @@ Additionally:
 It took me a 4 days of working.
 Passed A, C and B on a half levels of a test task.
 Thanks to Gooddelo team for that experience.
+
