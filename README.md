@@ -28,7 +28,7 @@ bun install
 Create a file named `.env.local` in the project root and add:
 
 ```env
-NEXT_PUBLIC_WAQI_API_TOKEN=YOUR_TOKEN # insert your token here or try a 'demo' one. (you can either just insert your latitude and longitude)
+NEXT_PUBLIC_WAQI_API_TOKEN=YOUR_TOKEN # insert your token here or try a 'demo' one. (you can either just insert your latitude and longitude below)
 NEXT_PUBLIC_POINT_LATITUDE=YOUR_LATITUDE # insert your latitude here. (for exmp. 53.2036)
 NEXT_PUBLIC_POINT_LONGITUDE=YOUR_LONGITUDE # insert your longitude here. (for exmp. 50.1678)
 ```
@@ -60,6 +60,7 @@ Additionally:
 It took me 4 days of work.
 Passed A, C and half of B levels of a test task.
 Thanks to Gooddelo team for that experience.
+
 
 
 
