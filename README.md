@@ -57,9 +57,10 @@ AND THAT'S IT! HAVE A GOOD DAY!
 
 
 Additionally:
-It took me a 4 days of working.
-Passed A, C and B on a half levels of a test task.
+It took me 4 days of work.
+Passed A, C and half of B levels of a test task.
 Thanks to Gooddelo team for that experience.
+
 
 
 
