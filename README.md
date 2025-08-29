@@ -4,7 +4,7 @@
 
 ### QUICK SET UP TO GO:
 
-### 1 (CLONE REPOSITORY)
+## 1 (CLONE REPOSITORY)
 ```cmd
 git clone https://github.com/RPDPR/SamaraAQI
 cd samaraaqi
@@ -62,5 +62,6 @@ Additionally:
 It took me a 4 days of working.
 Passed A, C and B on a half levels of a test task.
 Thanks to Gooddelo team for that experience.
+
 
 
