@@ -11,6 +11,8 @@ import { fetcherWAQI } from "@/shared/lib/index";
 import { convertPM25ToAQI } from "@/shared/api/utils";
 
 export const WAQI: FC<T_WAQI> = ({ secondary }) => {
+  const token = process.env.NEXT_PUBLIC_WAQI_API_TOKEN;
+
   const waqiStoreData_aqi = useAQIStore((state) => state.waqiData.aqi);
   const waqiStoreData_pm25 = useAQIStore((state) => state.waqiData.pm25);
   const waqiStoreData_pm10 = useAQIStore((state) => state.waqiData.pm10);
@@ -19,9 +21,9 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
 
   const {
     data: waqiData,
-    error,
-    isLoading,
-  } = useSWR(API_LINKS.waqi, fetcherWAQI, {
+    error: waqiError,
+    isLoading: waqiIsLoading,
+  } = useSWR(token ? `${API_LINKS.waqi}${token}` : null, fetcherWAQI, {
     refreshInterval: API_FETCH_INTERVAL,
   });
 
@@ -50,27 +52,36 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
     };
 
     if (!secondary) {
-      res.resultString = APP_CONSTS.measurementName.aqi;
-      res.resultValue =
+      res =
         aqi != null
-          ? aqi.toFixed(0)
+          ? {
+              resultString: APP_CONSTS.measurementName.aqi,
+              resultValue: aqi.toFixed(0),
+            }
           : pm25 != null
-          ? convertPM25ToAQI(pm25).toFixed()
-          : "no data";
+          ? {
+              resultString: APP_CONSTS.measurementName.aqi,
+              resultValue: convertPM25ToAQI(pm25).toFixed(),
+            }
+          : { resultString: "", resultValue: "no data" };
     } else {
-      if (lastUpdated != null && Object.keys(lastUpdated).length) {
+      if (
+        lastUpdated != null &&
+        Object.keys(lastUpdated).length &&
+        lastUpdated.key != "aqi"
+      ) {
         res =
-          lastUpdated.key == "pm25" && pm25 != null
+          lastUpdated.key == "pm25" && lastUpdated.value != null
             ? {
                 resultString: APP_CONSTS.measurementName.pm25,
-                resultValue: `${pm25.toFixed(1)} ${
+                resultValue: `${lastUpdated.value.toFixed(0)} ${
                   APP_CONSTS.unitsOfMeasurement.pm25
                 }`,
               }
-            : lastUpdated.key == "pm10" && pm10 != null
+            : lastUpdated.key == "pm10" && lastUpdated.value != null
             ? {
                 resultString: APP_CONSTS.measurementName.pm10,
-                resultValue: `${pm10.toFixed(1)} ${
+                resultValue: `${lastUpdated.value.toFixed(0)} ${
                   APP_CONSTS.unitsOfMeasurement.pm10
                 }`,
               }
@@ -80,14 +91,14 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
           pm25 != null
             ? {
                 resultString: APP_CONSTS.measurementName.pm25,
-                resultValue: `${pm25.toFixed(1)} ${
+                resultValue: `${pm25.toFixed(0)} ${
                   APP_CONSTS.unitsOfMeasurement.pm25
                 }`,
               }
             : pm10 != null
             ? {
                 resultString: APP_CONSTS.measurementName.pm10,
-                resultValue: `${pm10.toFixed(1)} ${
+                resultValue: `${pm10.toFixed(0)} ${
                   APP_CONSTS.unitsOfMeasurement.pm10
                 }`,
               }
@@ -107,23 +118,25 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
     updateWaqiData,
   ]);
 
-  if (error) return <SC secondary={secondary} />;
-  if (isLoading)
+  if (waqiError) return <SC secondary={secondary} />;
+  if (waqiIsLoading)
     return (
       <div className="relative h-full w-full ">
-        <h1 className="absolute text-[34px] font-sans font-extrabold top-48.5">
+        <h1 className="absolute text-[34px] 4k:text-[68px] font-sans font-extrabold top-15 lg:top-48.5 4k:top-97 px-15 lg:px-0 4k:px-0">
           loading...
         </h1>
       </div>
     );
-  if (!waqiData) return <SC secondary={secondary} />;
+
+  if (aqi == null || pm25 == null || pm10 == null)
+    return <SC secondary={secondary} />;
 
   return (
-    <div className="relative h-full w-full text-nowrap">
-      <h1 className="absolute lg:text-[178px] font-sans font-semibold lg:top-[-10]">
+    <div className="relative w-full h-full min-h-[149.5px] 4k:min-h-[299px]">
+      <h1 className="absolute text-[80px] lg:text-[200px] 4k:text-[400px] font-sans font-semibold top-[10] lg:top-[-10] 4k:top-[-20] left-[40px] lg:left-[7px] 4k:left-[14px] tracking-[-5px] lg:tracking-[-11px] 4k:tracking-[-22px] text-nowrap">
         {res.resultValue ? res.resultValue.toLocaleString() : "no data"}
       </h1>
-      <h2 className="absolute lg:text-[34px] font-sans font-extrabold lg:top-48.5 lg:left-[-1px]">
+      <h2 className="absolute text-[40px] lg:text-[40px] 4k:text-[80px] font-sans font-bold top-[110px] lg:top-54.5 4k:top-109 left-[40px] lg:left-[7px] 4k:left-[14px] tracking-[-2.7px] lg:tracking-[-2.8px] 4k:tracking-[-5.6px] lg:w-60 4k:w-120">
         {res.resultString ? res.resultString.toLocaleString() : ""}
       </h2>
     </div>

@@ -41,4 +41,8 @@ export const APP_CONSTS = {
     average: 101,
     bad: 151,
   },
+
+  errorMessage: {
+    failedToFetch: "error: failed to fetch",
+  },
 };

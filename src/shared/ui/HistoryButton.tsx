@@ -3,6 +3,7 @@ import { FC } from "react";
 const RightArrow: FC = () => {
   return (
     <svg
+      className="4k:w-14 4k:h-15 inline-block"
       width="28"
       height="29"
       viewBox="0 0 28 29"
@@ -25,12 +26,16 @@ export const HistoryButton = ({
   h,
   fs,
   text,
+  className,
+  disabled = false,
   onClick,
 }: {
   w: number;
   h: number;
-  fs: number;
+  fs?: number;
   text?: string;
+  className?: string;
+  disabled?: boolean;
   onClick?: () => void;
 }) => {
   return (
@@ -41,7 +46,11 @@ export const HistoryButton = ({
         fontSize: `${fs}px`,
       }}
       onClick={onClick}
-      className={`font-sans font-semibold bg-white text-black rounded-3xl hover:bg-black hover:text-white hover:border-1 hover:border-white cursor-pointer flex items-center justify-between px-7 select-none`}
+      disabled={disabled}
+      className={
+        `font-sans font-medium bg-white text-black rounded-3xl lg:rounded-3xl 4k:rounded-full hover:bg-black hover:text-white hover:border-1 hover:border-white cursor-pointer flex items-center justify-between px-7 select-none text-nowrap ` +
+        className
+      }
     >
       <span>{text}</span>
       <RightArrow />

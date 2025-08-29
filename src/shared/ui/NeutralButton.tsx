@@ -9,7 +9,7 @@ export const NeutralButton = ({
 }: {
   w: number;
   h: number;
-  fs: number;
+  fs?: number;
   text?: string;
   className?: string;
   disabled?: boolean;
@@ -25,7 +25,7 @@ export const NeutralButton = ({
       onClick={onClick}
       disabled={disabled}
       className={
-        `font-sans font-semibold bg-black text-white rounded-3xl hover:bg-white hover:text-black hover:border-1 hover:border-black cursor-pointer flex items-center justify-between px-7 select-none disabled:bg-white disabled:text-black disabled:cursor-default disabled:border-1 disabled:border-black ` +
+        `font-sans font-medium bg-black text-white rounded-3xl lg:rounded-3xl 4k:rounded-full hover:bg-white hover:text-black hover:border-1 hover:border-black cursor-pointer flex items-center justify-between px-7 select-none disabled:bg-white disabled:text-black disabled:cursor-default disabled:border-1 disabled:border-black ` +
         className
       }
     >

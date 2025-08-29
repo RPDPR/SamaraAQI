@@ -14,11 +14,6 @@ export const fetcherWAQI = async (link: string): Promise<FetchSchema_WAQI> => {
   }
 
   const json = await response.json();
-
-  if (json.status !== "ok") {
-    throw new Error(`WAQI API error: ${json.data}`);
-  }
-
   const { aqi, pm10, pm25 } = getWAQIValues(json);
 
   const formattedData: FetchSchema_WAQI = {
@@ -27,9 +22,9 @@ export const fetcherWAQI = async (link: string): Promise<FetchSchema_WAQI> => {
     pm25: pm25 ?? null,
   };
 
-  // update zustand store /////
+  // update last updated time in store
   useAQIStore.getState().setLastUpdatedTime(Date.now());
-  console.log(formattedData);
+
   return formattedData;
 };
 
@@ -46,7 +41,6 @@ export const fetcherSC = async (link: string): Promise<FetchSchema_SC> => {
     { lat: Number(POINT_LATITUDE), lon: Number(POINT_LONGITUDE) },
     json
   );
-
   const { pm10, pm25, temperature, humidity } = getSensorValues(closestSensor);
 
   const formattedData: FetchSchema_SC = {
@@ -56,8 +50,8 @@ export const fetcherSC = async (link: string): Promise<FetchSchema_SC> => {
     humidity: humidity ?? null,
   };
 
-  // update zustand store /////
+  // update last updated time in store
   useAQIStore.getState().setLastUpdatedTime(Date.now());
-  console.log(formattedData);
+
   return formattedData;
 };

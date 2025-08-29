@@ -6,6 +6,7 @@ import {
   APP_CONSTS,
   FetchSchema_WAQI,
   FetchSchema_SC,
+  I_Indication,
   getIndication,
 } from "@/shared/models/index";
 import { fetcherWAQI, fetcherSC } from "@/shared/lib/index";
@@ -16,16 +17,25 @@ import {
 } from "@/shared/api/index";
 
 export const IndicationTile: FC = () => {
-  const waqiStoreData = useAQIStore((state) => state.waqiData);
-  const scStoreData = useAQIStore((state) => state.scData);
+  const token = process.env.NEXT_PUBLIC_WAQI_API_TOKEN;
+
+  const waqiStoreData_aqi = useAQIStore((state) => state.waqiData.aqi);
+  const waqiStoreData_pm25 = useAQIStore((state) => state.waqiData.pm25);
+  const scStoreData_pm25 = useAQIStore((state) => state.scData.pm25);
 
   const {
     data: waqiData,
     error: waqiError,
     isLoading: waqiIsLoading,
-  } = useSWR<FetchSchema_WAQI>(API_LINKS.waqi, fetcherWAQI, {
-    refreshInterval: API_FETCH_INTERVAL,
-  });
+  } = useSWR<FetchSchema_WAQI>(
+    token ? `${API_LINKS.waqi}${token}` : null,
+    fetcherWAQI,
+    {
+      refreshInterval: API_FETCH_INTERVAL,
+      dedupingInterval: 2000,
+      shouldRetryOnError: false,
+    }
+  );
   const {
     data: scData,
     error: scError,
@@ -36,32 +46,34 @@ export const IndicationTile: FC = () => {
     {
       refreshInterval: API_FETCH_INTERVAL,
       revalidateOnMount: false,
+      dedupingInterval: 2000,
     }
   );
 
-  const indication = useMemo(() => {
-    const newAqi =
-      waqiData?.aqi ??
-      (waqiData?.pm25 ? convertPM25ToAQI(waqiData.pm25) : null) ??
-      (scData?.pm25 ? convertPM25ToAQI(scData.pm25) : null) ??
-      waqiStoreData?.aqi ??
-      (waqiStoreData?.pm25 ? convertPM25ToAQI(waqiStoreData.pm25) : null) ??
-      (scStoreData?.pm25 ? convertPM25ToAQI(scStoreData.pm25) : null) ??
-      null;
+  const aqi = waqiData?.aqi ?? waqiStoreData_aqi;
+  const pm25 =
+    waqiData?.pm25 ?? waqiStoreData_pm25 ?? scData?.pm25 ?? scStoreData_pm25;
+
+  const indication = useMemo<I_Indication>(() => {
+    const newAqi = aqi ?? (pm25 ? convertPM25ToAQI(pm25) : null);
     return getIndication(newAqi);
-  }, [waqiData, waqiStoreData, scData, scStoreData]);
+  }, [aqi, pm25]);
 
   if (waqiError && scError)
     return (
       <div
-        className="w-full h-full text-left font-sans font-medium lg:border-1 lg:border-black lg:rounded-2xl flex flex-col justify-between px-15 pt-6.5"
-        style={{
-          backgroundColor: indication.color ? indication.color : "#d4d4d4",
-        }}
+        className="w-full h-full text-left font-sans font-medium lg:border-1 4k:border-1 lg:border-black 4k:border-black lg:rounded-2xl 4k:rounded-4xl flex flex-col justify-between px-15 lg:px-15 4k:px-30 pt-6.5 lg:pt-6.5 4k:pt-13"
+        style={
+          indication.color
+            ? {
+                backgroundColor: indication.color,
+              }
+            : {}
+        }
       >
         <div className="relative h-full w-full">
-          <h1 className="absolute text-[34px] font-sans font-extrabold top-48.5">
-            Error: {(waqiError ?? scError).toLocaleString()}
+          <h1 className="absolute text-[34px] lg:text-[34px] 4k:text-[68px] font-sans font-extrabold top-15 lg:top-48.5 4k:top-97">
+            {APP_CONSTS.errorMessage.failedToFetch}
           </h1>
         </div>
       </div>
@@ -69,13 +81,17 @@ export const IndicationTile: FC = () => {
   if (waqiIsLoading || scIsLoading)
     return (
       <div
-        className="w-full h-full text-left font-sans font-medium lg:border-1 lg:border-black lg:rounded-2xl flex flex-col justify-between px-15 pt-6.5"
-        style={{
-          backgroundColor: indication.color ? indication.color : "#d4d4d4",
-        }}
+        className="w-full h-full text-left font-sans font-medium lg:border-1 4k:border-1 lg:border-black 4k:border-black lg:rounded-2xl 4k:rounded-4xl flex flex-col justify-between px-15 lg:px-15 4k:px-30 pt-6.5 lg:pt-6.5 4k:pt-13"
+        style={
+          indication.color
+            ? {
+                backgroundColor: indication.color,
+              }
+            : {}
+        }
       >
         <div className="relative h-full w-full">
-          <h1 className="absolute text-[34px] font-sans font-extrabold top-48.5">
+          <h1 className="absolute text-[34px] lg:text-[34px] 4k:text-[68px] font-sans font-extrabold top-15 lg:top-48.5 4k:top-97">
             loading...
           </h1>
         </div>
@@ -86,26 +102,27 @@ export const IndicationTile: FC = () => {
     <>
       <div
         className={
-          "w-full min-h-[295px] lg:h-full text-left font-sans lg:rounded-2xl lg:border-1 lg:border-black flex flex-col justify-between px-10 pt-6 pb-9"
+          "w-full h-full lg:h-full 4k:h-full font-sans lg:rounded-2xl 4k:rounded-4xl lg:border-1 4k:border-1 lg:border-black 4k:border-black flex flex-col justify-between px-10 lg:px-14 4k:px-28 pt-2 lg:pt-12.5 4k:pt-25 pb-9 lg:pb-20 4k:pb-40"
         }
-        style={{
-          backgroundColor: indication.color ? indication.color : "#d4d4d4",
-        }}
+        style={
+          indication.color
+            ? {
+                backgroundColor: indication.color,
+              }
+            : {}
+        }
       >
         <div>
-          <h1 className="text-[50px] lg:text-[75px] font-medium leading-12 lg:leading-19.5 tracking-[-3px]">
-            {indication.title != "no data" &&
-            indication.title != undefined &&
-            indication.title != null
+          <h1 className="text-[50px] font-medium lg:text-[89px] 4k:text-[178px] leading-[100%] lg:leading-[100%] 4k:leading-[100%] tracking-[-4px] lg:tracking-[-6px] 4k:tracking-[-12px]">
+            {indication.title != "no data" && indication.title != null
               ? APP_CONSTS.indicationTile.title1
               : ""}
           </h1>
-          <h2 className="text-[50px] lg:text-[75px] font-medium leading-12 lg:leading-19.5 tracking-[-2px]">
+          <h2 className="text-[50px] font-medium lg:text-[89px] 4k:text-[178px] leading-[100%] lg:leading-[100%] 4k:leading-[100%] tracking-[-3px] lg:tracking-[-5.2px] 4k:tracking-[-10.4px]">
             {indication.title}
           </h2>
         </div>
-
-        <p className="text-[34px] lg:text-[30px] font-[400] leading-8 tracking-[0.1px] pb-0.5">
+        <p className="text-[34px] lg:text-[34px] 4k:text-[68px] font-regular leading-[100%] lg:leading-[0%] 4k:leading-[0%]">
           {`${
             indication.title != "no data" ? APP_CONSTS.indicationTile.desc1 : ""
           } ${indication.desc}`}

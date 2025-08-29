@@ -57,16 +57,28 @@ export function getSensorValues(sensor: SC_Sensor): FetchSchema_SC {
     const valueType = el.value_type;
     switch (valueType) {
       case "P1":
-        sensorValues.pm10 = el.value != null ? Number(el.value) : null;
+        sensorValues.pm10 =
+          el.value != null && !isNaN(Number(el.value)) && Number(el.value)
+            ? Number(el.value)
+            : null;
         break;
       case "P2":
-        sensorValues.pm25 = el.value != null ? Number(el.value) : null;
+        sensorValues.pm25 =
+          el.value != null && !isNaN(Number(el.value)) && Number(el.value)
+            ? Number(el.value)
+            : null;
         break;
       case "temperature":
-        sensorValues.temperature = el.value != null ? Number(el.value) : null;
+        sensorValues.temperature =
+          el.value != null && !isNaN(Number(el.value)) && Number(el.value)
+            ? Number(el.value)
+            : null;
         break;
       case "humidity":
-        sensorValues.humidity = el.value != null ? Number(el.value) : null;
+        sensorValues.humidity =
+          el.value != null && !isNaN(Number(el.value)) && Number(el.value)
+            ? Number(el.value)
+            : null;
         break;
     }
   });
@@ -80,11 +92,24 @@ export function getWAQIValues(resp: WAQI_Response): FetchSchema_WAQI {
     pm25: null,
   };
 
-  waqiValues.aqi = resp.data.aqi != null ? Number(resp.data.aqi) : null;
+  waqiValues.aqi =
+    resp.data.aqi != null &&
+    !isNaN(Number(resp.data.aqi)) &&
+    Number(resp.data.aqi)
+      ? Number(resp.data.aqi)
+      : null;
   waqiValues.pm10 =
-    resp.data.iaqi.pm10.v != null ? Number(resp.data.iaqi.pm10.v) : null;
+    resp.data.iaqi.pm10.v != null &&
+    !isNaN(Number(resp.data.iaqi.pm10.v)) &&
+    Number(resp.data.iaqi.pm10.v)
+      ? Number(resp.data.iaqi.pm10.v)
+      : null;
   waqiValues.pm25 =
-    resp.data.iaqi.pm25.v != null ? Number(resp.data.iaqi.pm25.v) : null;
+    resp.data.iaqi.pm25.v != null &&
+    !isNaN(Number(resp.data.iaqi.pm25.v)) &&
+    Number(resp.data.iaqi.pm25.v)
+      ? Number(resp.data.iaqi.pm25.v)
+      : null;
 
   return waqiValues;
 }

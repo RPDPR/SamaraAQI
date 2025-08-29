@@ -47,7 +47,10 @@ export const useAQIStore = create<I_AQI>((set, get) => ({
     const newData = { ...get().waqiData };
     let newLastUpdated: T_lastUpdated = { ...get().lastUpdated };
 
-    if (aqi == null && pm10 == null && pm25 == null) return;
+    if (aqi == null && pm10 == null && pm25 == null)
+      return {
+        lastUpdatedTime: Date.now(),
+      };
 
     if (pm10 != null && newData.pm10 != pm10) {
       newData.pm10 = pm10;
@@ -84,7 +87,9 @@ export const useAQIStore = create<I_AQI>((set, get) => ({
       (temperature == null || temperature == newData.temperature) &&
       (humidity == null || humidity == newData.humidity)
     )
-      return;
+      return {
+        lastUpdatedTime: Date.now(),
+      };
 
     if (humidity != null && newData.humidity != humidity) {
       newData.humidity = humidity;

@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function About() {
-  return <div>ABOUT US</div>;
+  return <div className="mx-auto text-center">ABOUT US</div>;
 }

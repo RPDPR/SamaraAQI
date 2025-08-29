@@ -3,9 +3,9 @@ import { FC } from "react";
 export const Logo: FC = () => {
   return (
     <svg
-      className="w-60 h-60"
-      width="270"
-      height="269"
+      className="w-full h-full"
+      width="318"
+      height="307"
       viewBox="0 0 270 269"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

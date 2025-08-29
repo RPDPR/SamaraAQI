@@ -22,9 +22,9 @@ export const SC: FC<T_SC> = ({ secondary }) => {
 
   const {
     data: scData,
-    error,
-    isLoading,
-    mutate,
+    error: scError,
+    isLoading: scIsLoading,
+    mutate: scMutate,
   } = useSWR(API_LINKS.sc, fetcherSC, {
     refreshInterval: API_FETCH_INTERVAL,
   });
@@ -60,41 +60,38 @@ export const SC: FC<T_SC> = ({ secondary }) => {
       const aqi = pm25 != null ? convertPM25ToAQI(pm25) : null;
       res.resultValue = aqi != null ? aqi.toFixed(0) : "no data";
     } else {
-      console.log(lastUpdated);
       if (lastUpdated != null && Object.keys(lastUpdated).length) {
-        console.log("LAST UPDATED!");
         res =
-          lastUpdated.key === "pm25" && pm25 != null
+          lastUpdated.key === "pm25" && lastUpdated.value != null
             ? {
                 resultString: APP_CONSTS.measurementName.pm25,
-                resultValue: `${pm25.toFixed(1)} ${
+                resultValue: `${lastUpdated.value.toFixed(1)} ${
                   APP_CONSTS.unitsOfMeasurement.pm25
                 }`,
               }
-            : lastUpdated.key === "temperature" && temperature != null
+            : lastUpdated.key === "temperature" && lastUpdated.value != null
             ? {
                 resultString: APP_CONSTS.measurementName.temperature,
-                resultValue: `${temperature.toFixed(1)} ${
+                resultValue: `${lastUpdated.value.toFixed(1)} ${
                   APP_CONSTS.unitsOfMeasurement.temperature
                 }`,
               }
-            : lastUpdated.key === "pm10" && pm10 != null
+            : lastUpdated.key === "pm10" && lastUpdated.value != null
             ? {
                 resultString: APP_CONSTS.measurementName.pm10,
-                resultValue: `${pm10.toFixed(1)} ${
+                resultValue: `${lastUpdated.value.toFixed(1)} ${
                   APP_CONSTS.unitsOfMeasurement.pm10
                 }`,
               }
-            : lastUpdated.key === "humidity" && humidity != null
+            : lastUpdated.key === "humidity" && lastUpdated.value != null
             ? {
                 resultString: APP_CONSTS.measurementName.humidity,
-                resultValue: `${humidity.toFixed(0)} ${
+                resultValue: `${lastUpdated.value.toFixed(0)} ${
                   APP_CONSTS.unitsOfMeasurement.humidity
                 }`,
               }
             : { resultString: "", resultValue: "no data" };
       } else {
-        console.log("НЕ LAST UPDATED!");
         res =
           pm25 != null
             ? {
@@ -142,48 +139,60 @@ export const SC: FC<T_SC> = ({ secondary }) => {
     updateScData,
   ]);
 
-  if (error)
+  if (scError)
     return (
       <div className="relative h-full w-full">
-        <h1 className="absolute text-[34px] font-sans font-extrabold top-48.5">
-          Error: {error.toLocaleString()}
+        <h1 className="absolute text-[34px] lg:text-[34px] 4k:text-[68px] font-sans font-extrabold top-15 lg:top-48.5 4k:top-97 px-15 lg:px-0 4k:px-0">
+          {APP_CONSTS.errorMessage.failedToFetch}
         </h1>
-        <div className="absolute text-[34px] font-sans font-extrabold top-48.5 left-150">
+        <div className="absolute text-[34px] lg:text-[34px] 4k:text-[68px] hidden lg:block 4k:hidden font-sans font-extrabold lg:top-49.75 lg:left-90">
           <TryAgainButton
-            w={180}
-            h={50}
+            w={160}
+            h={40}
             fs={20}
             text="try again"
             onClick={() => {
-              mutate(undefined, { revalidate: true });
+              scMutate();
             }}
+          />
+        </div>
+        <div className="absolute text-[68px] hidden lg:hidden 4k:block font-sans font-extrabold 4k:top-99.5 4k:left-180">
+          <TryAgainButton
+            w={320}
+            h={80}
+            fs={40}
+            text="try again"
+            onClick={() => {
+              scMutate();
+            }}
+            className="4k:px-14"
           />
         </div>
       </div>
     );
-  if (isLoading)
+  if (scIsLoading)
     return (
       <div className="relative h-full w-full">
-        <h1 className="absolute text-[34px] font-sans font-extrabold top-48.5">
+        <h1 className="absolute text-[34px] lg:text-[34px] 4k:text-[68px] font-sans font-extrabold top-15 lg:top-48.5 4k:top-97 px-15 lg:px-0 4k:px-0">
           loading...
         </h1>
       </div>
     );
-  if (!scData)
+  if (pm25 == null && pm10 == null && temperature == null && humidity == null)
     return (
       <div className="relative h-full w-full">
-        <h1 className="absolute text-[34px] font-sans font-extrabold top-48.5">
+        <h1 className="absolute text-[34px] lg:text-[34px] 4k:text-[68px] font-sans font-extrabold top-15 lg:top-48.5 4k:top-97 px-15 lg:px-0 4k:px-0">
           no data
         </h1>
       </div>
     );
 
   return (
-    <div className="relative h-full w-full">
-      <h1 className="absolute lg:text-[200px] font-sans font-semibold lg:top-[-10] lg:left-[7px] lg:tracking-[-13px]">
+    <div className="relative w-full h-full min-h-[149.5px] 4k:min-h-[299px]">
+      <h1 className="absolute text-[80px] lg:text-[200px] 4k:text-[400px] font-sans font-semibold top-[10] lg:top-[-10] 4k:top-[-20] left-[40px] lg:left-[7px] 4k:left-[14px] tracking-[-5px] lg:tracking-[-11px] 4k:tracking-[-22px] text-nowrap">
         {res.resultValue ? res.resultValue.toLocaleString() : "no data"}
       </h1>
-      <h2 className="absolute lg:text-[40px] font-sans font-bold lg:top-54.5 lg:left-[7px] lg:tracking-[-2.8px]">
+      <h2 className="absolute text-[40px] lg:text-[40px] 4k:text-[80px] font-sans font-bold top-[110px] lg:top-54.5 4k:top-109 left-[40px] lg:left-[7px] 4k:left-[14px] tracking-[-2.7px] lg:tracking-[-2.8px] 4k:tracking-[-5.6px] lg:w-60 4k:w-120">
         {res.resultString ? res.resultString.toLocaleString() : ""}
       </h2>
     </div>

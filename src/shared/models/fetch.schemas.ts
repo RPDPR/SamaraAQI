@@ -1,9 +1,9 @@
 export type WAQI_Response = {
   data: {
-    aqi: number | null;
+    aqi: number | string | null;
     iaqi: {
-      pm10: { v: number | null };
-      pm25: { v: number | null };
+      pm10: { v: number | string | null };
+      pm25: { v: number | string | null };
     };
   };
 };
@@ -11,9 +11,9 @@ export type WAQI_Response = {
 export type SC_Sensor = {
   location: { latitude: number; longitude: number };
   sensordatavalues: {
-    id: number;
-    value: number | null;
-    value_type: string;
+    id: number | string | null;
+    value: number | string | null;
+    value_type: number | string | null;
   }[];
 };
 

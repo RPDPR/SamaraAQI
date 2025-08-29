@@ -1,12 +1,12 @@
 import { APP_CONSTS } from "./consts";
 
-export interface Indication {
+export interface I_Indication {
   title: string;
   desc: string;
   color: string;
 }
 
-export function getIndication(aqiValue: number | null): Indication {
+export function getIndication(aqiValue: number | null): I_Indication {
   let title;
   let desc;
   let color;
