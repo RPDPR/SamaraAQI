@@ -1,10 +1,10 @@
-### AQI SAMARA | RPD | 08/30/2025
+## AQI SAMARA | RPD | 08/30/2025
 
 
 
 ### QUICK SET UP TO GO:
 
-## 1 (CLONE REPOSITORY)
+### 1 (CLONE REPOSITORY)
 ```cmd
 git clone https://github.com/RPDPR/SamaraAQI
 cd samaraaqi
