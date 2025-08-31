@@ -115,7 +115,7 @@ export const StatisticsTile: FC = () => {
   return (
     <div
       className={
-        "w-full h-full lg:border-1 4k:border-1 lg:border-black 4k:border-black lg:rounded-2xl 4k:lg:rounded-4xl lg:pl-22.75 4k:pl-45.5 flex flex-col justify-between overflow-x-hidden"
+        "w-full h-full mx-auto lg:mx-auto 2k:mx-auto 4k:mx-auto lg:border-1 4k:border-1 lg:border-black 4k:border-black lg:rounded-2xl 4k:lg:rounded-4xl lg:pl-22.75 4k:pl-45.5 flex flex-col justify-between overflow-x-hidden"
       }
       style={{
         backgroundImage: `linear-gradient(to bottom right, white, ${
@@ -123,7 +123,7 @@ export const StatisticsTile: FC = () => {
         })`,
       }}
     >
-      <div className="w-full min-h-80 lg:min-h-130 4k:min-h-260 flex flex-col justify-between">
+      <div className="w-full min-h-80 lg:min-h-130 4k:min-h-260 flex flex-col justify-between px-6 lg:px-0 4k:px-0">
         <WAQI secondary={false} />
         <WAQI secondary={true} />
       </div>

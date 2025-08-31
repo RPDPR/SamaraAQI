@@ -121,8 +121,8 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
   if (waqiError) return <SC secondary={secondary} />;
   if (waqiIsLoading)
     return (
-      <div className="relative h-full w-full ">
-        <h1 className="absolute text-[34px] 4k:text-[68px] font-sans font-extrabold top-15 lg:top-48.5 4k:top-97 px-15 lg:px-0 4k:px-0">
+      <div className="relative w-110 h-full mx-auto lg:mx-0 2k:mx-0 4k:mx-0 px-9 lg:px-0 2k:px-0 4k:px-0">
+        <h1 className="absolute text-[34px] 4k:text-[68px] font-sans font-extrabold top-15 lg:top-48.5 4k:top-97 lg:px-0 2k:px-0 4k:px-0">
           loading...
         </h1>
       </div>
@@ -132,11 +132,11 @@ export const WAQI: FC<T_WAQI> = ({ secondary }) => {
     return <SC secondary={secondary} />;
 
   return (
-    <div className="relative w-full h-full min-h-[149.5px] 4k:min-h-[299px]">
-      <h1 className="absolute text-[80px] lg:text-[200px] 4k:text-[400px] font-sans font-semibold top-[10] lg:top-[-10] 4k:top-[-20] left-[40px] lg:left-[7px] 4k:left-[14px] tracking-[-5px] lg:tracking-[-11px] 4k:tracking-[-22px] text-nowrap">
-        {res.resultValue ? res.resultValue.toLocaleString() : "no data"}
+    <div className="relative w-110 h-full mx-auto lg:mx-0 2k:mx-0 4k:mx-0 min-h-[149.5px] 4k:min-h-[299px]">
+      <h1 className="absolute text-[80px] lg:text-[200px] 4k:text-[400px] font-sans font-semibold top-[10] lg:top-[-10] 4k:top-[-20] lg:left-2 tracking-[-5px] lg:tracking-[-11px] 4k:tracking-[-22px] text-nowrap">
+        {res.resultValue ? "543" : "no data"}
       </h1>
-      <h2 className="absolute text-[40px] lg:text-[40px] 4k:text-[80px] font-sans font-bold top-[110px] lg:top-54.5 4k:top-109 left-[40px] lg:left-[7px] 4k:left-[14px] tracking-[-2.7px] lg:tracking-[-2.8px] 4k:tracking-[-5.6px] lg:w-60 4k:w-120">
+      <h2 className="absolute text-[40px] lg:text-[40px] 4k:text-[80px] font-sans font-bold top-[110px] lg:top-54.5 4k:top-109 lg:left-[7px] 4k:left-[14px] tracking-[-2.7px] lg:tracking-[-2.8px] 4k:tracking-[-5.6px] lg:w-60 4k:w-120">
         {res.resultString ? res.resultString.toLocaleString() : ""}
       </h2>
     </div>

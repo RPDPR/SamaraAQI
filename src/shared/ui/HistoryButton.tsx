@@ -28,14 +28,16 @@ export const HistoryButton = ({
   text,
   className,
   disabled = false,
+  tabIndex = 0,
   onClick,
 }: {
-  w: number;
-  h: number;
+  w?: number;
+  h?: number;
   fs?: number;
   text?: string;
   className?: string;
   disabled?: boolean;
+  tabIndex?: number;
   onClick?: () => void;
 }) => {
   return (
@@ -45,6 +47,7 @@ export const HistoryButton = ({
         height: `${h}px`,
         fontSize: `${fs}px`,
       }}
+      tabIndex={tabIndex}
       onClick={onClick}
       disabled={disabled}
       className={
