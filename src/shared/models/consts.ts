@@ -4,10 +4,10 @@ export const APP_CONSTS = {
   indicationTile: {
     title1: "Душнила",
     titleGood: "доволен вами",
-    titleAverage: "следит за вами",
+    titleAverage: "следит за вами 👀",
     titleBad: "недоволен вами 🫵",
     desc1: "AQI",
-    descGood: "в норме",
+    descGood: "выше среднего",
     descAverage: "выше среднего",
     descBad: "превышает норму",
     colorBad: "#ff8a7a",

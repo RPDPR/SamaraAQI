@@ -116,7 +116,7 @@ export const IndicationTile: FC = () => {
             : {}
         }
       >
-        <div className="mx-auto lg:mx-0 2k:mx-0 4k:mx-0">
+        <div className="w-full mx-auto lg:mx-0 2k:mx-0 4k:mx-0">
           <h1 className="text-[50px] font-medium lg:text-[89px] 2k:text-[133px] 4k:text-[178px] leading-[100%] lg:leading-[100%] 2k:leading-[100%] 4k:leading-[100%] tracking-[-4px] lg:tracking-[-6px] 2k:tracking-[-9px] 4k:tracking-[-12px]">
             {indication.title != "no data" && indication.title != null
               ? APP_CONSTS.indicationTile.title1
@@ -126,8 +126,8 @@ export const IndicationTile: FC = () => {
             {indication.title}
           </h2>
         </div>
-        <div className="w-110 mx-auto lg:mx-0 2k:mx-0 4k:mx-0">
-          <p className="text-[34px] lg:text-[34px] 2k:text-[51px] 4k:text-[68px] font-regular leading-[100%] lg:leading-[0%] 2k:leading-[0%] 4k:leading-[0%]">
+        <div className="w-full mx-auto lg:mx-0 2k:mx-0 4k:mx-0">
+          <p className="w-full text-[34px] lg:text-[34px] 2k:text-[51px] 4k:text-[68px] font-regular leading-[100%] lg:leading-none 2k:leading-none 4k:leading-none">
             {`${
               indication.title != "no data"
                 ? APP_CONSTS.indicationTile.desc1
