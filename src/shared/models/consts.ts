@@ -7,7 +7,7 @@ export const APP_CONSTS = {
     titleAverage: "следит за вами 👀",
     titleBad: "недоволен вами 🫵",
     desc1: "AQI",
-    descGood: "выше среднего",
+    descGood: "в норме",
     descAverage: "выше среднего",
     descBad: "превышает норму",
     colorBad: "#ff8a7a",

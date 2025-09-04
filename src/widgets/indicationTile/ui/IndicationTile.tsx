@@ -106,7 +106,7 @@ export const IndicationTile: FC = () => {
     <>
       <div
         className={
-          "w-full h-full lg:h-full 2k:h-full 4k:h-full font-sans lg:rounded-2xl 2k:rounded-3xl 4k:rounded-4xl lg:border-1 2k:border-1 4k:border-1 lg:border-black 2k:border-black 4k:border-black flex flex-col justify-between px-10 lg:px-14 2k:px-21 4k:px-28 pt-2 lg:pt-12.5 2k:pt-18.75 4k:pt-25 pb-9 lg:pb-20 2k:pb-30 4k:pb-40 overflow-x-hidden"
+          "w-full h-full lg:h-full 2k:h-full 4k:h-full font-sans lg:rounded-2xl 2k:rounded-3xl 4k:rounded-4xl lg:border-1 2k:border-1 4k:border-1 lg:border-black 2k:border-black 4k:border-black flex flex-col justify-between px-10 lg:px-14 2k:px-21 4k:px-28 pt-2 lg:pt-12.5 2k:pt-18.75 4k:pt-25 pb-9 lg:pb-15.5 2k:pb-23.25 4k:pb-31 overflow-x-hidden"
         }
         style={
           indication.color
