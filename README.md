@@ -2,6 +2,8 @@
 
 [![Demo on Vercel](https://img.shields.io/badge/vercel-demo-black?logo=vercel)](https://samara-aqi.vercel.app/)
 
+### Stack: TypeScript, React, Zustand, SWR, TailwindCSS
+
 ## QUICK SETUP TO GO:
 
 ### 1 (CLONE REPOSITORY)
@@ -32,9 +34,9 @@ bun install
 Create a file named **_.env.local_** in the project root and add:
 
 ```env
-NEXT_PUBLIC_WAQI_API_TOKEN=YOUR_TOKEN # insert your token on WAQI API ( get in on https://aqicn.org/data-platform/token ) here or try a 'demo' one. (you can either just insert your latitude and longitude below)
-NEXT_PUBLIC_POINT_LATITUDE=YOUR_LATITUDE # insert your latitude here. (for exmp. 53.2036)
-NEXT_PUBLIC_POINT_LONGITUDE=YOUR_LONGITUDE # insert your longitude here. (for exmp. 50.1678)
+NEXT_PUBLIC_WAQI_API_TOKEN=your_token # insert your token on WAQI API ( get in on https://aqicn.org/data-platform/token ) here or try a 'demo' one. (you can either just insert your latitude and longitude below)
+NEXT_PUBLIC_POINT_LATITUDE=your_latitude # insert your latitude here. (for exmp. 53.2036)
+NEXT_PUBLIC_POINT_LONGITUDE=your_longitude # insert your longitude here. (for exmp. 50.1678)
 ```
 
 Change inner variables on your data
