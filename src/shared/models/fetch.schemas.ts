@@ -5,7 +5,7 @@ export type WAQI_Response = {
       pm10: { v: number | string | null };
       pm25: { v: number | string | null };
     };
-  };
+  } | null;
 };
 
 export type SC_Sensor = {
